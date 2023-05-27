@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Expense {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  amount         Int
+  labelId        Int? // food, transport, entertainment, etc
+  label          Label?           @relation(fields: [labelId], references: [id])
+  categoryId     Int // mom hey cetes ccbbva ccsantander
+  category       Category         @relation(fields: [categoryId], references: [id]) // food, transport, entertainment, etc
+  typeId         Int // needs, wants, savins
+  type           Type             @relation(fields: [typeId], references: [id])
+  userId         Int
+  isActive       Boolean          @default(true)
+  savingExpenses SavingExpense[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+// mom hey cetes ccbbva ccsantander
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  userId     Int
+  Expense     Expense[]
+  category DebtOuput[] @relation("category1")
+  recoverable DebtOuput[] @relation("category2")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// food, transport, entertainment, etc
+model Label {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  userId      Int?
+  Expense     Expense[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Plan {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  userId      Int?
+  Type     Type[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// needs, wants, savings
+model Type {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  percentage Int
+  plan Plan @relation(fields: [planId], references: [id])
+  planId Int
+  Expense     Expense[]
+  userId      Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Saving {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  description    Int
+  savingExpense SavingExpense[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model SavingExpense {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?
+  savingsId   Int
+  savings     Saving  @relation(fields: [savingsId], references: [id])
+  expenseId   Int
+  expense     Expense  @relation(fields: [expenseId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Portfolio {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  Asset       Asset[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Asset {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  wantedAmount Int
+  portfolioId   Int
+  portfolio     Portfolio  @relation(fields: [portfolioId], references: [id])
+  AssetInput       AssetInput[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
+model AssetInput {
+  id          Int       @id @default(autoincrement())
+  amount Int
+  assetId   Int
+  asset     Asset  @relation(fields: [assetId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Debt {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  debtOuput     DebtOuput[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model DebtOuput {
+  id          Int       @id @default(autoincrement())
+  amount Int
+  debtId   Int
+  debt     Debt  @relation(fields: [debtId], references: [id])
+  category Category @relation("category1", fields: [categoryId], references: [id])
+  categoryId Int
+  recoverable Category @relation("category2", fields: [recoverableId], references: [id])
+  recoverableId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
