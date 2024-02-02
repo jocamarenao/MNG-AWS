@@ -5,8 +5,8 @@ export default {
   events: [
     {
       http: {
-        method: 'get',
-        path: 'authorization',
+        method: 'post',
+        path: 'logout',
       },
     },
   ],

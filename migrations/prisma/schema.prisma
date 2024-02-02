@@ -13,7 +13,9 @@ datasource db {
 model Expense {
   id             Int              @id @default(autoincrement())
   name           String           @db.VarChar(255)
-  amount         Int
+  amount         Int          
+  savings        Int                    
+  period         Int              @default(2)
   labelId        Int? // food, transport, entertainment, etc
   label          Label?           @relation(fields: [labelId], references: [id])
   categoryId     Int // mom hey cetes ccbbva ccsantander
@@ -22,7 +24,6 @@ model Expense {
   type           Type             @relation(fields: [typeId], references: [id])
   userId         Int
   isActive       Boolean          @default(true)
-  savingExpenses SavingExpense[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
@@ -75,27 +76,6 @@ model Type {
   updatedAt   DateTime  @updatedAt
 }
 
-model Saving {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(255)
-  description    Int
-  savingExpense SavingExpense[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-}
-
-model SavingExpense {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255)
-  description String?
-  savingsId   Int
-  savings     Saving  @relation(fields: [savingsId], references: [id])
-  expenseId   Int
-  expense     Expense  @relation(fields: [expenseId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
 model Portfolio {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
@@ -107,7 +87,7 @@ model Portfolio {
 model Asset {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
-  wantedAmount Int
+  wantedAmount Decimal
   portfolioId   Int
   portfolio     Portfolio  @relation(fields: [portfolioId], references: [id])
   AssetInput       AssetInput[]
@@ -118,7 +98,7 @@ model Asset {
 
 model AssetInput {
   id          Int       @id @default(autoincrement())
-  amount Int
+  amount Decimal
   assetId   Int
   asset     Asset  @relation(fields: [assetId], references: [id])
   createdAt   DateTime  @default(now())
@@ -135,7 +115,7 @@ model Debt {
 
 model DebtOuput {
   id          Int       @id @default(autoincrement())
-  amount Int
+  amount Decimal
   debtId   Int
   debt     Debt  @relation(fields: [debtId], references: [id])
   category Category @relation("category1", fields: [categoryId], references: [id])

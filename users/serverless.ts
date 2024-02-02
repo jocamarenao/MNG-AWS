@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
-import authorization from '@functions/authorization';
+import authentication from '@functions/authentication';
+import logout from '@functions/logout';
 
 const serverlessConfiguration: AWS = {
   service: 'users',
@@ -20,7 +21,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { authorization },
+  functions: { authentication, logout },
   package: { individually: true },
   custom: {
     esbuild: {

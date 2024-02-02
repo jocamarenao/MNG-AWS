@@ -29,9 +29,6 @@ const serverlessConfiguration: AWS = {
   functions: { hello },
   package: { individually: true },
   custom: {
-    dotenv: {
-      useDotenv: true,
-    },
     esbuild: {
       bundle: true,
       minify: false,
@@ -43,6 +40,7 @@ const serverlessConfiguration: AWS = {
       concurrency: 10,
     },
   },
+  useDotenv: true,
 };
 
 module.exports = serverlessConfiguration;

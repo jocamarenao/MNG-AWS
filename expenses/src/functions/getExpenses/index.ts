@@ -1,4 +1,3 @@
-import schema from './schema';
 import { handlerPath } from '@libs/handler-resolver';
 
 export default {
@@ -6,12 +5,14 @@ export default {
   events: [
     {
       http: {
-        method: 'post',
-        path: 'hello',
+        method: 'get',
+        path: 'expenses',
+        authorizer: {
+          type: 'COGNITO_USER_POOLS', 
+          authorizerId: 'iyx8br', 
+          claims: ['email', 'cognito:groups'],
+        },
         request: {
-          schemas: {
-            'application/json': schema,
-          },
         },
       },
     },

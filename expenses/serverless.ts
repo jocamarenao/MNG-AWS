@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
-import hello from '@functions/hello';
+import getExpenses from '@functions/getExpenses';
+import updateSavings from '@functions/updateSavings';
 
 const serverlessConfiguration: AWS = {
   service: 'expenses',
@@ -17,11 +18,18 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      DB_DIALECT: process.env.DB_DIALECT,
+      DB_NAME: process.env.DB_NAME,
+      DB_USERNAME: process.env.DB_USERNAME,
+      DB_PASSWORD: process.env.DB_PASSWORD,
+      DB_HOST: process.env.DB_HOST,
+      DB_PORT: process.env.DB_PORT,
     },
   },
   // import the function via paths
   functions: {
-    hello,
+    getExpenses,
+    updateSavings,
   },
   resources: {
     Resources: {
@@ -33,7 +41,7 @@ const serverlessConfiguration: AWS = {
           Type: 'COGNITO_USER_POOLS',
           IdentitySource: 'method.request.header.Authorization',
           ProviderARNs: ['arn:aws:cognito-idp:us-west-1:279817701152:userpool/us-west-1_8RZctIGfl'],
-          AuthorizerResultTtlInSeconds: 0
+          // AuthorizerResultTtlInSeconds: 0
         },
       },
       MNGAuthorizer: {
@@ -43,16 +51,13 @@ const serverlessConfiguration: AWS = {
           RestApiId: { Ref: 'ApiGatewayRestApi' },
           Type: 'REQUEST',
           AuthorizerUri: 'arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:279817701152:function:users-dev-authorization/invocations',
-          AuthorizerResultTtlInSeconds: 0
+          // AuthorizerResultTtlInSeconds: 0
         },
       },
     },
   },
   package: { individually: true },
   custom: {
-    dotenv: {
-      useDotenv: true,
-    },
     esbuild: {
       bundle: true,
       minify: false,
@@ -64,6 +69,7 @@ const serverlessConfiguration: AWS = {
       concurrency: 10,
     },
   },
+  useDotenv: true,
 };
 
 module.exports = serverlessConfiguration;
